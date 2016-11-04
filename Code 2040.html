@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="Evan Flowers" content=" Code 2040">
+	<link rel="icon" href="../favicon.ico">
+
+	<title>Evan Flowers</title>
+
+	<style>
+		body {
+			padding-top: 50px;
+			padding-bottom: 20px;
+		}
+	</style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+</head>
+<body>
+		<h1>Reversing A String</h1>
+		<button class="btn st1"> First method </button>
+		<div>
+			<p>
+				String before: <input type="text" id="stage1Recieved"/>
+				String after: <input type="text" id="stage1Sent"/>
+			</p>
+			<p id="validation1"></p>
+		</div>
+	</div>
+	<div class="container">
+		<h1>Needle In A Haystack</h1>
+		<button class="btn st2"> Second method </button>
+		<div>
+			<p>
+				Data before <textarea rows="5" cols="50" type="textarea" id="stage2Recieved"></textarea>
+				Data after <input type="text" id="stage2Sent"/>
+			</p>
+			<p id="validation2"></p>
+		</div>
+	</div>
+	<div class="container">
+		<h1> Prefixes </h1>
+		<button class="btn st3"> Third Method </button>
+		<div>
+			<p>
+				Data before <textarea rows="5" cols="50" type="textarea" id="stage3Recieved"></textarea>
+				Data after <textarea rows="5" cols="50" type="textarea" id="stage3Sent"></textarea>
+			</p>
+			<p id="validation3"></p>
+		</div>
+	</div>
+	<div class="container">
+		<h1>Pair game</h1>
+		<button class="btn st4"> Fourth Method </button>
+		<div>
+			<p>
+				Data before <input type="text" id="stage4Recieved"/>
+				Data after <input type="text" id="stage4Sent"/>
+			</p>
+			<p id="validation4"></p>
+		</div>
+	</div>
+	<div class="container">
+		<h1>Status update</h1>
+		<button class="btn st5"> click here </button>
+		<div>
+			<p id="validation5"></p>
+		</div>
+	</div>
+	<script>
+		var send = {
+			"token" : "351418c7b40f888934c1288bda63612c"
+		}
+		$(document).ready(function(){
+
+			$(".st1").click(function() {
+				$.ajax({
+	                url: "http://challenge.code2040.org/api/getstring",
+	                type: 'POST',
+	                crossDomain: true,
+	                dataType: 'json',
+	                data: JSON.stringify(send)
+	            }).done(function (data) {
+	                $("#stage1Recieved").val(data.result);
+	                var result = reverse(data.result);
+	                $("#stage1Sent").val(result);
+	                sendback("string", result, "validatestring", 1);
+	            });
+	        });
+	        $(".st2").click(function() {
+				$.ajax({
+	                url: "http://challenge.code2040.org/api/haystack",
+	                type: 'POST',
+	                crossDomain: true,
+	                dataType: 'json',
+	                data: JSON.stringify(send)
+	            }).done(function (data) {
+	                $("#stage2Recieved").val(data.result.haystack.toString());
+	                result = getIndex(data.result.haystack, data.result.needle);
+	                $("#stage2Sent").val(result);
+	                sendback("needle", result, "validateneedle", 2);
+	            });
+	        });
+	        $(".st3").click(function() {
+				$.ajax({
+	                url: "http://challenge.code2040.org/api/prefix",
+	                type: 'POST',
+	                crossDomain: true,
+	                dataType: 'json',
+	                data: JSON.stringify(send)
+	            }).done(function (data) {
+	                $("#stage3Recieved").val(data.result.array.toString() + " " + data.result.prefix);
+	                result = nonSyncronusArray(data.result.array, data.result.prefix);
+	                $("#stage3Sent").val(result);
+	                sendback("array", result, "validateprefix", 3);
+	            });
+	        });
+	        $(".st4").click(function() {
+				$.ajax({
+	                url: "http://challenge.code2040.org/api/time",
+	                type: 'POST',
+	                crossDomain: true,
+	                dataType: 'json',
+	                data: JSON.stringify(send)
+	            }).done(function (data) {
+	                $("#stage4Recieved").val(data.result.datestamp + " " + data.result.interval);
+	                result = addIntStamp(data.result.datestamp, data.result.interval);
+	                $("#stage4Sent").val(result);
+	                sendback("datestamp", result, "validatetime", 4);
+	            });
+	        });
+	        $(".st5").click(function() {
+				$.ajax({
+	                url: "http://challenge.code2040.org/api/status",
+	                type: 'POST',
+	                crossDomain: true,
+	                dataType: 'json',
+	                data: JSON.stringify(send)
+	            }).done(function (data) {
+	                $("#validation5").text(data.result.toString());
+	            });
+	        });
+            function reverse(stringIn) {
+            	//base case
+            	if (stringIn === "") {
+            		return "";
+            	} else {
+            		//recursive return
+            		return reverse(stringIn.substring(1, stringIn.length)) + stringIn.charAt(0);
+            	}
+            }
+            function getIndex(arrayIndex, searchResult) {
+				var index = 0;
+				//once value is found end loop
+				while (arrayIndex[index] !== searchResult) {
+					index++;
+				}
+				}
+				return index;
+			}
+			function nonSyncronusArray(arrayIndex, prefixIn) {
+				//regular expression for prefix
+				var pattern = RegExp("^" + prefixIn);
+				result = [];
+				for(var i = 0; i < arrayIndex.length; i++) {
+					//if the pattern does not match the array value
+					if (!pattern.test(arrayIndex[i])){
+						//add to array to be returned
+						result.push(arrayIndex[i]);
+					}
+				}
+				return result;
+			}
+			function addIntStamp(dateStamp, interval) {
+				var date = new Date(dateStamp);
+				date.setSeconds(date.getSeconds() + interval);
+				return date.toISOString();
+			}
+            function sendback(key, value, endpointIn, stage) {
+            	//Generic ajax to send results of stages
+            	var sendbackData = {
+            		"token" : "351418c7b40f888934c1288bda63612c"
+            	}
+            	sendbackData[key] = value;
+            	$.ajax({
+	                url: "http://challenge.code2040.org/api/" + endpointIn,
+	                type: 'POST',
+	                crossDomain: true,
+	                dataType: 'json',
+	                data: JSON.stringify(sendbackData)
+	            }).done(function (data) {
+	            	//print out the validation
+	                $("#validation" + stage).text(data.result);
+	            });
+            }
+		});
+	</script>
+</body>
+</html>
