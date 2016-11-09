@@ -20,8 +20,13 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 <body>
+	<div class = "container">
+		<h1> Request </h1>
+		<button class ="btn st0" id = "st0"> Request </button>
+			<p id="validation0"></p>
+<div class="container">
 		<h1>Reversing A String</h1>
-		<button class="btn st1"> First method </button>
+		<button class="btn st1" id="st1"> First method </button>
 		<div>
 			<p>
 				String before: <input type="text" id="stage1Recieved"/>
@@ -72,77 +77,114 @@
 	</div>
 	<script>
 		var send = {
-			"token" : "351418c7b40f888934c1288bda63612c"
-		}
-		$(document).ready(function(){
+			"token" : "351418c7b40f888934c1288bda63612c",
+			"github" :"https://github.com/boogi3train/Code-2040/blob/master/Code%202040.html"
+		};
 
-			$(".st1").click(function() {
+		$(document).ready(function(){
+			$("#st0").click(function() {
 				$.ajax({
-	                url: "http://challenge.code2040.org/api/getstring",
+							url: "http://challenge.code2040.org/api/register",
+							type: 'POST',
+							crossDomain: true,
+							contentType: 'application/json',
+							dataType: 'text',
+							data: JSON.stringify(send),
+		}).done(function(data, text) {
+  		$('#validation0').text('Success: ' + data);
+		}) // end of 'done'
+		.fail(function(qXHR, textStatus, errorThrown) {
+  		$('#validation0').text('Failure: ' + textStatus);
+		}) // end of 'fail'
+		;
+		});
+
+			$("#st1").click(function() {
+				$.ajax({
+	                url: "http://challenge.code2040.org/api/reverse",
 	                type: 'POST',
 	                crossDomain: true,
-	                dataType: 'json',
+	                dataType: 'text',
+                        contentType : 'application/json',
 	                data: JSON.stringify(send)
-	            }).done(function (data) {
-	                $("#stage1Recieved").val(data.result);
-	                var result = reverse(data.result);
+	            }).done(function (data, text) {
+	                $("#stage1Recieved").val(data);
+	                var result = reverse(data);
 	                $("#stage1Sent").val(result);
-	                sendback("string", result, "validatestring", 1);
-	            });
+	                sendback("string", result, "/reverse/validate", 1);
+	            }).fail(function (qXHR, textStatus, errorThrown) {
+                        $('#stage1Recieved').val('Error: '  + textStatus + ', ' + errorThrown);
+                    });
 	        });
 	        $(".st2").click(function() {
 				$.ajax({
 	                url: "http://challenge.code2040.org/api/haystack",
 	                type: 'POST',
 	                crossDomain: true,
+									contentType: 'application/json',
 	                dataType: 'json',
 	                data: JSON.stringify(send)
 	            }).done(function (data) {
-	                $("#stage2Recieved").val(data.result.haystack.toString());
-	                result = getIndex(data.result.haystack, data.result.needle);
+								alert('got data from server, data = ' + data +', type = '+ (typeof data + JSON.stringify(data)));
+	                $("#stage2Recieved").val(data.haystack.toString());
+	                result = getIndex(data.haystack, data.needle);
 	                $("#stage2Sent").val(result);
-	                sendback("needle", result, "validateneedle", 2);
-	            });
+	                sendback("needle", result, "/haystack/validate", 2);
+	            }).fail(function (qXHR, textStatus, errorThrown) {
+                        $('#stage2Recieved').val('Error: '  + textStatus + ', ' + errorThrown);
+											});
 	        });
 	        $(".st3").click(function() {
 				$.ajax({
 	                url: "http://challenge.code2040.org/api/prefix",
 	                type: 'POST',
 	                crossDomain: true,
+									contentType: 'application/json',
 	                dataType: 'json',
 	                data: JSON.stringify(send)
 	            }).done(function (data) {
-	                $("#stage3Recieved").val(data.result.array.toString() + " " + data.result.prefix);
-	                result = nonSyncronusArray(data.result.array, data.result.prefix);
+								alert('got data from server, data = ' + data +', type = '+ (typeof data + JSON.stringify(data)));
+	                $("#stage3Recieved").val(data.array.toString() + " " + data.prefix);
+	                result = nonSyncronusArray(data.array, data.prefix);
 	                $("#stage3Sent").val(result);
-	                sendback("array", result, "validateprefix", 3);
-	            });
+	                sendback("array", result, "/prefix/validate", 3);
+	            }).fail(function (qXHR, textStatus, errorThrown) {
+                        $('#stage3Recieved').val('Error: '  + textStatus + ', ' + errorThrown);
+											});
 	        });
 	        $(".st4").click(function() {
 				$.ajax({
-	                url: "http://challenge.code2040.org/api/time",
+	                url: "http://challenge.code2040.org/api/dating",
 	                type: 'POST',
 	                crossDomain: true,
+									contentType: 'application/json',
 	                dataType: 'json',
 	                data: JSON.stringify(send)
 	            }).done(function (data) {
-	                $("#stage4Recieved").val(data.result.datestamp + " " + data.result.interval);
-	                result = addIntStamp(data.result.datestamp, data.result.interval);
+								alert('got data from server, data = ' + data +', type = '+ (typeof data + JSON.stringify(data)));
+	                $("#stage4Recieved").val(data.datestamp + " " + data.interval);
+	                result = addIntStamp(data.datestamp, data.interval);
 	                $("#stage4Sent").val(result);
-	                sendback("datestamp", result, "validatetime", 4);
-	            });
+	                sendback("datestamp", result, "/dating/validate", 4);
+	            }).fail(function (qXHR, textStatus, errorThrown) {
+                        $('#stage4Recieved').val('Error: '  + textStatus + ', ' + errorThrown);
+											});
 	        });
 	        $(".st5").click(function() {
 				$.ajax({
 	                url: "http://challenge.code2040.org/api/status",
 	                type: 'POST',
 	                crossDomain: true,
-	                dataType: 'json',
+									contentType: 'application/json',
+	                dataType: 'text',
 	                data: JSON.stringify(send)
 	            }).done(function (data) {
-	                $("#validation5").text(data.result.toString());
-	            });
-	        });
+	                $("#validation5").text(data.toString());
+	            }).fail(function (qXHR, textStatus, errorThrown) {
+                        $('#stage4Recieved').val('Error: '  + textStatus + ', ' + errorThrown);
+											});
+					});
+            });
             function reverse(stringIn) {
             	//base case
             	if (stringIn === "") {
@@ -157,7 +199,6 @@
 				//once value is found end loop
 				while (arrayIndex[index] !== searchResult) {
 					index++;
-				}
 				}
 				return index;
 			}
@@ -176,27 +217,34 @@
 			}
 			function addIntStamp(dateStamp, interval) {
 				var date = new Date(dateStamp);
-				date.setSeconds(date.getSeconds() + interval);
-				return date.toISOString();
+				var mili = interval*1000;
+				date.setTime(date.getTime() + mili);
+				return date.toISOString().substring(0,19) + "Z";
 			}
+
             function sendback(key, value, endpointIn, stage) {
             	//Generic ajax to send results of stages
             	var sendbackData = {
             		"token" : "351418c7b40f888934c1288bda63612c"
-            	}
+            	};
+
             	sendbackData[key] = value;
             	$.ajax({
 	                url: "http://challenge.code2040.org/api/" + endpointIn,
 	                type: 'POST',
 	                crossDomain: true,
-	                dataType: 'json',
+                        contentType: 'application/json',
+	                dataType: 'text',
 	                data: JSON.stringify(sendbackData)
-	            }).done(function (data) {
+	            }).done(function (data, text) {
 	            	//print out the validation
-	                $("#validation" + stage).text(data.result);
-	            });
+	                $('#validation' + stage).text('Sucess: ' + data);
+                    }).fail(function (qXHR, textStatus, errorThrown) {
+                        $('#validation' + stage).text('Error: ' + textStatus + ', ' + errorThrown);
+                    });
             }
-		});
+
+alert('Loaded');
 	</script>
 </body>
 </html>
